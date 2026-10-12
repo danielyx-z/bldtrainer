@@ -19,13 +19,20 @@ export type Progress = Record<string, PairProgress>;
 
 export type WordsPerPair = 1 | 2 | "all";
 
+export type BackgroundMode = "off" | "photo";
+
+export interface BackgroundSettings {
+  mode: BackgroundMode;
+  intensity: number;
+}
+
 export interface Settings {
   wordsPerPair: WordsPerPair;
   showExplicit: boolean;
   letters: string[];
   sessionLength: number;
   weakFirst: boolean;
-  autoAdvance: boolean;
+  background: BackgroundSettings;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -34,10 +41,37 @@ export const DEFAULT_SETTINGS: Settings = {
   letters: [...LETTERS],
   sessionLength: 25,
   weakFirst: true,
-  autoAdvance: true,
+  background: { mode: "off", intensity: 0.45 },
 };
 
 export const SESSION_LENGTHS = [10, 25, 50, 552];
+
+/** Coerce stored/imported settings into valid shape (migrates old values). */
+export function normalizeSettings(raw: Settings): Settings {
+  const merged: Settings = { ...DEFAULT_SETTINGS, ...raw };
+  if (!SESSION_LENGTHS.includes(merged.sessionLength)) {
+    merged.sessionLength = 25;
+  }
+  if (
+    merged.wordsPerPair !== 1 &&
+    merged.wordsPerPair !== 2 &&
+    merged.wordsPerPair !== "all"
+  ) {
+    merged.wordsPerPair = "all";
+  }
+  const bg = (raw as Partial<Settings>).background as
+    | { mode?: unknown; intensity?: unknown }
+    | undefined;
+  // "ascii" mode was removed; those users keep their photo, dimmed.
+  const mode: BackgroundMode =
+    bg?.mode === "photo" || bg?.mode === "ascii" ? "photo" : "off";
+  const intensity =
+    typeof bg?.intensity === "number" && Number.isFinite(bg.intensity)
+      ? Math.min(1, Math.max(0, bg.intensity))
+      : DEFAULT_SETTINGS.background.intensity;
+  merged.background = { mode, intensity };
+  return merged;
+}
 
 const KEYS = {
   overrides: "bldtrainer.overrides.v1",

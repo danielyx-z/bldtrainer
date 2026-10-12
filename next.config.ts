@@ -10,7 +10,15 @@ const nextConfig: NextConfig = {
         loaders: ["@tailwindcss/turbopack"],
         as: "*.css",
       },
+      "*.txt": {
+        loaders: ["raw-loader"],
+        as: "*.js",
+      },
     },
+  },
+  webpack: (config) => {
+    config.module.rules.push({ test: /\.txt$/, type: "asset/source" });
+    return config;
   },
 };
 

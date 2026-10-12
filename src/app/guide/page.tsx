@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Guide to BLD Letter Pairs",
   description:
     "What letter pairs are, how Speffz A to X memo works for 3x3 blindfolded, and how to drill them with flashcards.",
   alternates: { canonical: "/guide" },

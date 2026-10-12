@@ -20,25 +20,31 @@ export function PairsBrowser() {
   const [weakOnly, setWeakOnly] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
 
-  const rows = useMemo(() => {
+  const groups = useMemo(() => {
     const q = query.trim().toLowerCase();
-    const pool =
-      tab === "ALL"
-        ? ALL_PAIRS
-        : ALL_PAIRS.filter((p) => p[0] === tab);
-    return pool.filter((pair) => {
-      if (mineOnly && !hasCustom(pair, overrides)) return false;
-      if (weakOnly && !isWeak(pair, progress)) return false;
-      if (q) {
-        const words = visibleWords(pair, overrides, true)
-          .map((w) => w.text.toLowerCase())
-          .join(" ");
-        if (!pair.toLowerCase().includes(q) && !words.includes(q))
-          return false;
-      }
-      return true;
-    });
+    const letters = tab === "ALL" ? LETTERS : [tab];
+    return letters
+      .map((letter) => ({
+        letter,
+        pairs: ALL_PAIRS.filter(
+          (p) => p[0] === letter,
+        ).filter((pair) => {
+          if (mineOnly && !hasCustom(pair, overrides)) return false;
+          if (weakOnly && !isWeak(pair, progress)) return false;
+          if (q) {
+            const words = visibleWords(pair, overrides, true)
+              .map((w) => w.text.toLowerCase())
+              .join(" ");
+            if (!pair.toLowerCase().includes(q) && !words.includes(q))
+              return false;
+          }
+          return true;
+        }),
+      }))
+      .filter((g) => g.pairs.length > 0);
   }, [query, tab, mineOnly, weakOnly, overrides, progress]);
+
+  const matchCount = groups.reduce((a, g) => a + g.pairs.length, 0);
 
   const customCount = Object.keys(overrides).length;
 
@@ -88,16 +94,28 @@ export function PairsBrowser() {
       </div>
 
       <p className="label mb-2 shrink-0 tabular-nums" aria-live="polite">
-        {rows.length} / 552 pairs
+        {matchCount} / 552 pairs
       </p>
 
-      {rows.length === 0 ? (
+      {matchCount === 0 ? (
         <div className="card px-4 py-8 text-center text-sm opacity-70">
           Nothing matches. Try a different search or clear the filters.
         </div>
       ) : (
-        <ul className="min-h-0 flex-1 divide-y divide-[var(--color-ink)] overflow-y-auto border rule">
-          {rows.map((pair) => {
+        <div className="min-h-0 flex-1 space-y-5 overflow-y-auto">
+          {groups.map(({ letter, pairs }) => (
+            <section key={letter} aria-label={`Pairs starting with ${letter}`}>
+              <div className="mb-1 flex items-baseline justify-between">
+                <h2 className="text-sm font-bold tracking-tight">
+                  {letter}
+                  <span className="font-normal opacity-50">.glyph</span>
+                </h2>
+                <p className="label tabular-nums">
+                  {pairs.length} / 23
+                </p>
+              </div>
+              <ul className="divide-y divide-[var(--color-ink)] border rule">
+                {pairs.map((pair) => {
             const words = visibleWords(pair, overrides, true);
             const primary = words[0];
             const mine = hasCustom(pair, overrides);
@@ -164,8 +182,11 @@ export function PairsBrowser() {
               </li>
             );
           })}
-        </ul>
-      )}
+                </ul>
+              </section>
+            ))}
+          </div>
+        )}
     </div>
   );
 }

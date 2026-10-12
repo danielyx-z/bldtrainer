@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { PairsBrowser } from "@/components/PairsBrowser";
 
 export const metadata: Metadata = {
-  title: "Pair Library",
   description:
     "Browse, search and edit all 552 Speffz letter pairs. Add your own words, keep several per pair, flag explicit ones.",
   alternates: { canonical: "/pairs" },

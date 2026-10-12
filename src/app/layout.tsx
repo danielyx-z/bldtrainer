@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { StoreProvider } from "@/components/StoreProvider";
+import { BackgroundLayer } from "@/components/BackgroundLayer";
 import { Header } from "@/components/Header";
 
 const paperMono = localFont({
@@ -16,10 +17,7 @@ const SITE_URL =
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: {
-    default: "BLD Letter Pairs — 3x3 Blindfolded Trainer",
-    template: "%s · BLD Letter Pairs",
-  },
+  title: "BLD / PAIRS",
   description:
     "Drill all 552 Speffz letter pairs for 3x3 blindfolded solving. Flashcards with presets, custom words, weak-pair tracking. Free, no account, data stays in your browser.",
   keywords: [
@@ -74,14 +72,15 @@ export default function RootLayout({
           }}
         />
         <StoreProvider>
+          <BackgroundLayer />
           <Header />
-          <main className="mx-auto flex min-h-0 w-full max-w-4xl flex-1 flex-col px-4 py-4">
+          <main className="relative z-10 mx-auto flex min-h-0 w-full max-w-4xl flex-1 flex-col px-4 py-4">
             {children}
           </main>
-          <footer className="shrink-0 border-t rule">
+          <footer className="relative z-10 shrink-0 border-t rule">
             <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-2 px-4 py-2 text-[11px] tracking-widest uppercase opacity-60">
               <span className="tabular-nums">pairs 552 · images 612 · letters a–x</span>
-              <span>set in paper mono</span>
+              <span>typeset in paper mono</span>
             </div>
           </footer>
         </StoreProvider>

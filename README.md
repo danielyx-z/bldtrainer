@@ -1,45 +1,27 @@
-# BLD Letter Pairs — 3x3 Blindfolded Trainer
+# bldtrainer
 
-Flashcard trainer for all 552 Speffz letter pairs (A–X). A pair pops up,
-you picture your image, reveal, grade yourself. Weak pairs resurface first.
+Flashcard trainer for 3x3 blindfolded letter pairs. A pair shows up, you think of your image, reveal, mark whether you knew it.
 
-- `/` — trainer (Space = reveal, 1 = got it, 2 = learning, 3 = edit pair inline, Esc = close)
-- `/pairs` — library: search, filter, edit every pair
-- `/guide` — what letter pairs are + how to drill them
+![trainer](demo/trainer.png)
+![revealed card](demo/revealed.png)
 
-Custom words per pair (several allowed, first is primary), explicit
-show/hide filter, per-letter rotation, weak-first sessions. Everything
-persists in `localStorage` — no account, no backend.
+552 pairs, Speffz A-X. Ships with presets, or click any pair and write your own words. Pairs you keep missing come back first.
 
-## Run
+![library](demo/pairs.png)
+
+## Run it
 
 ```sh
 npm install
-npm run dev      # http://localhost:3000
-npm run build && npm start
+npm run dev
 ```
 
-Set the canonical URL for SEO before deploying:
+Set `NEXT_PUBLIC_SITE_URL` to your domain before `npm run build`, otherwise canonical URLs and the sitemap point at the placeholder.
 
-```sh
-NEXT_PUBLIC_SITE_URL=https://your-domain.com npm run build
-```
+## Pairs
 
-## Presets
+Edit `src/assets/pairs.txt`. One per line, `AB: word, alternate`. The app reads the file directly, nothing to regenerate.
 
-`src/lib/presets.ts` is generated verbatim from `pairs.txt`:
+## Notes
 
-```sh
-python3 scripts/generate-presets.py
-```
-
-6 pairs missing from the paste are filled in: AN Ant, FR Frog, FS Fist,
-FT Foot, GJ Godzilla, MN Moon. All 23 X pairs use SH replacements
-(X sounds like SH: XA Shark, XV Shovel) instead of the pasted
-Electric-__ scaffolding. Multi-word entries (`AD: Addison, Addicted`)
-become multiple words; explicit words are pre-tagged.
-
-## Stack
-
-Next.js App Router + Tailwind v4, single variable font (Paper Mono, OFL —
-see `public/fonts/OFL.txt`). Export/import JSON backup lives in Settings.
+No account, no server. Custom words, progress, and settings live in localStorage. A background photo lives in IndexedDB on the same machine and is never exported. Settings has Export/Import JSON if you switch machines.

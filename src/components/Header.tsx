@@ -25,7 +25,7 @@ export function Header() {
 
   return (
     <>
-      <header className="shrink-0 border-b rule">
+      <header className="relative z-10 shrink-0 border-b rule">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3">
           <Link href="/" className="text-sm font-bold tracking-tight">
             BLD<span className="opacity-50">/</span>PAIRS

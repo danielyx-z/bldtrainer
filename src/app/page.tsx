@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Trainer } from "@/components/Trainer";
 
 export const metadata: Metadata = {
-  title: "Train",
   description:
     "Flashcard drills for all 552 3x3 BLD letter pairs. See a pair, recall your image, grade yourself. Weak pairs resurface first.",
   alternates: { canonical: "/" },

@@ -44,7 +44,7 @@ export function PairEditor({
     setPairWords(pair, next);
     setNudged({ id, dir });
     if (nudgeTimer.current) clearTimeout(nudgeTimer.current);
-    nudgeTimer.current = setTimeout(() => setNudged(null), 240);
+    nudgeTimer.current = setTimeout(() => setNudged(null), 280);
   };
 
   // Animate the moved row after layout settles. WAAPI restarts reliably
@@ -59,10 +59,14 @@ export function PairEditor({
       [
         {
           transform: `translateY(${nudged.dir === -1 ? "14px" : "-14px"})`,
+          backgroundColor: "#e9e4d8",
         },
-        { transform: "translateY(0)" },
+        {
+          transform: "translateY(0)",
+          backgroundColor: "rgba(233, 228, 216, 0)",
+        },
       ],
-      { duration: 240, easing: "ease-out" },
+      { duration: 260, easing: "cubic-bezier(0.2, 0, 0.2, 1)" },
     );
     return () => anim.cancel();
   }, [nudged]);

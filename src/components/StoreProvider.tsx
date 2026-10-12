@@ -11,7 +11,7 @@ import {
 } from "react";
 import {
   DEFAULT_SETTINGS,
-  SESSION_LENGTHS,
+  normalizeSettings,
   STORE_KEYS,
   parseImport,
   readJSON,
@@ -49,9 +49,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setOverrides(readRecord<CustomWord[]>(STORE_KEYS.overrides));
     setProgress(readRecord<never>(STORE_KEYS.progress) as Progress);
     const stored = readJSON<Settings>(STORE_KEYS.settings, DEFAULT_SETTINGS);
-    if (!SESSION_LENGTHS.includes(stored.sessionLength))
-      stored.sessionLength = 25;
-    setSettings(stored);
+    setSettings(normalizeSettings(stored));
     setReady(true);
   }, []);
 
@@ -137,7 +135,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         if (parsed.overrides) setOverrides(parsed.overrides);
         if (parsed.progress) setProgress(parsed.progress);
         if (parsed.settings)
-          setSettings((prev) => ({ ...prev, ...parsed.settings }));
+          setSettings((prev) =>
+            normalizeSettings({ ...prev, ...parsed.settings }),
+          );
         return { ok: true, message: "Import complete." };
       } catch {
         return { ok: false, message: "Invalid JSON file." };

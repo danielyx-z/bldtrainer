@@ -36,7 +36,8 @@ function meter(done: number, total: number): string {
 }
 
 export function Trainer() {
-  const { overrides, progress, settings, updateSettings, grade } = useStore();
+  const { overrides, progress, settings, updateSettings, grade, ready } =
+    useStore();
   const [deck, setDeck] = useState<string[]>([]);
   const [index, setIndex] = useState(0);
   const [revealed, setRevealed] = useState(false);
@@ -88,12 +89,13 @@ export function Trainer() {
     ],
   );
 
-  // Start first session on mount (randomized deck = mount side effect).
+  // Start first session once stored settings hydrate, so the deck
+  // matches saved prefs (length, letters, filters) instead of defaults.
   useEffect(() => {
+    // Initial deck build from hydrated store; runs once when ready flips true.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (!started) start();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [started]);
+    if (!started && ready) start();
+  }, [started, ready, start]);
 
   const pair = deck[index];
   const done = started && deck.length > 0 && index >= deck.length;
@@ -103,23 +105,15 @@ export function Trainer() {
       if (!pair || !revealed) return;
       grade(pair, known);
       setSessionGrades((g) => [...g, { pair, known }]);
-      if (settings.autoAdvance) {
-        setIndex((i) => i + 1);
-        setRevealed(false);
-        setExpanded(false);
-      }
+      setIndex((i) => i + 1);
+      setRevealed(false);
+      setExpanded(false);
     },
-    [pair, revealed, grade, settings.autoAdvance],
+    [pair, revealed, grade],
   );
 
   const reveal = useCallback(() => {
     setRevealed(true);
-    setExpanded(false);
-  }, []);
-
-  const next = useCallback(() => {
-    setIndex((i) => i + 1);
-    setRevealed(false);
     setExpanded(false);
   }, []);
 
@@ -141,7 +135,6 @@ export function Trainer() {
       if (e.key === " " || e.key === "Enter") {
         e.preventDefault();
         if (!revealed) reveal();
-        else if (!settings.autoAdvance) next();
       } else if (e.key === "1") {
         if (revealed) doGrade(true);
       } else if (e.key === "2") {
@@ -153,7 +146,7 @@ export function Trainer() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [revealed, editing, settings.autoAdvance, reveal, next, doGrade]);
+  }, [revealed, editing, reveal, doGrade]);
 
   const sessionKnown = sessionGrades.filter((g) => g.known).length;
   const totalSeen = Object.values(progress).reduce((a, p) => a + p.seen, 0);
@@ -169,7 +162,7 @@ export function Trainer() {
   const hidden = words.length - shown.length;
   const pairAcc = pair ? accuracy(progress[pair]) : null;
 
-  if (!started) return null;
+  if (!started || !ready) return null;
 
   if (deck.length === 0) {
     return (
@@ -286,16 +279,17 @@ export function Trainer() {
               {revealed ? "Did you get it?" : "Think of your image"}
             </p>
             <p
-              className="text-[clamp(3rem,12dvh,6rem)] leading-none font-bold tracking-tight tabular-nums"
+              className="flex items-center justify-center gap-[0.1em] leading-none font-bold tracking-tight tabular-nums text-[clamp(3rem,12dvh,6rem)]"
               aria-live="polite"
             >
-              {pair}
+              <span>{pair[0]}</span>
+              <span>{pair[1]}</span>
             </p>
             <p className="label mt-2 tabular-nums">{codepoints(pair)}</p>
 
             <div className="mx-auto mt-4 max-w-sm min-h-[120px] w-full">
               {revealed && (
-                <div className="border-t rule pt-3">
+                <div className="animate-rise-in border-t rule pt-3">
                   {words.length === 0 ? (
                     <p className="text-sm opacity-60">
                       No words for this pair yet. Add your own below.
@@ -338,7 +332,7 @@ export function Trainer() {
                   Reveal [Space]
                 </button>
               ) : (
-                <div className="flex gap-2">
+                <div className="animate-rise-in flex gap-2">
                   <button
                     className="btn btn-solid flex-1"
                     onClick={() => doGrade(true)}
@@ -349,12 +343,6 @@ export function Trainer() {
                     Learning [2]
                   </button>
                 </div>
-              )}
-
-              {revealed && !settings.autoAdvance && (
-                <button className="btn mt-2 w-full" onClick={next}>
-                  Next →
-                </button>
               )}
             </div>
           </div>

@@ -1,9 +1,14 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useStore } from "./StoreProvider";
 import { LETTERS } from "@/lib/letters";
 import { DEFAULT_SETTINGS, exportData } from "@/lib/store";
+import {
+  clearBackground,
+  importBackground,
+  loadBackground,
+} from "@/lib/background";
 
 const SESSION_OPTIONS = [10, 25, 50, 552];
 
@@ -25,7 +30,23 @@ export function SettingsDialog({
   } = useStore();
   const [confirm, setConfirm] = useState<"progress" | "customs" | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [hasImage, setHasImage] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const bgRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    void loadBackground().then((b) => setHasImage(b !== null));
+  }, [open ]);
+
+  const bg = settings.background;
+  const setBg = (patch: Partial<typeof bg>) =>
+    updateSettings({ background: { ...bg, ...patch } });
+
+  const notify = (message: string) => {
+    setNotice(message);
+    window.setTimeout(() => setNotice(null), 3000);
+  };
 
   if (!open) return null;
 
@@ -53,8 +74,25 @@ export function SettingsDialog({
   const doImportFile = async (file: File) => {
     const raw = await file.text();
     const res = importData(raw);
-    setNotice(res.message);
-    window.setTimeout(() => setNotice(null), 3000);
+    notify(res.message);
+  };
+
+  const doBgFile = async (file: File) => {
+    try {
+      await importBackground(file);
+      setHasImage(true);
+      window.dispatchEvent(new Event("bld:bg-change"));
+      notify("Background saved in this browser.");
+    } catch (e) {
+      notify(e instanceof Error ? e.message : "Could not use that file.");
+    }
+  };
+
+  const doBgRemove = async () => {
+    await clearBackground();
+    setHasImage(false);
+    window.dispatchEvent(new Event("bld:bg-change"));
+    notify("Background removed.");
   };
 
   return (
@@ -64,7 +102,7 @@ export function SettingsDialog({
       role="presentation"
     >
       <div
-        className="card my-8 w-full max-w-lg"
+        className="card my-8 max-h-[calc(100dvh-4rem)] w-full max-w-lg overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
@@ -78,6 +116,35 @@ export function SettingsDialog({
         </div>
 
         <div className="space-y-6 px-4 py-4">
+          <section>
+            <p className="label mb-2">Session defaults</p>
+            <p className="mb-1 text-xs opacity-70">Cards per session</p>
+            <div className="flex gap-2">
+              {SESSION_OPTIONS.map((n) => (
+                <button
+                  key={n}
+                  className={`btn flex-1 px-1 ${settings.sessionLength === n ? "btn-solid" : ""}`}
+                  onClick={() => updateSettings({ sessionLength: n })}
+                  aria-pressed={settings.sessionLength === n}
+                >
+                  {n === 552 ? "All" : n}
+                </button>
+              ))}
+            </div>
+            <div className="mt-3 flex flex-col gap-2">
+              <label className="flex cursor-pointer items-center justify-between border rule px-3 py-2 text-sm">
+                <span>Weak pairs first</span>
+                <input
+                  type="checkbox"
+                  checked={settings.weakFirst}
+                  onChange={(e) =>
+                    updateSettings({ weakFirst: e.target.checked })
+                  }
+                />
+              </label>
+            </div>
+          </section>
+
           <section>
             <p className="label mb-2">Words shown per pair</p>
             <div className="flex gap-2">
@@ -121,6 +188,8 @@ export function SettingsDialog({
             </p>
           </section>
 
+
+
           <section>
             <div className="mb-2 flex items-center justify-between">
               <p className="label">Letters in rotation</p>
@@ -132,6 +201,17 @@ export function SettingsDialog({
                   }
                 >
                   All
+                </button>
+                <button
+                  className="text-xs underline"
+                  onClick={() =>
+                    updateSettings({
+                      letters: LETTERS.filter((l) => l !== "Q" && l !== "X"),
+                    })
+                  }
+                  title="Drop the two hardest letters"
+                >
+                  No Q·X
                 </button>
                 <button
                   className="text-xs underline"
@@ -158,43 +238,72 @@ export function SettingsDialog({
             </div>
           </section>
 
+
+
           <section>
-            <p className="label mb-2">Session defaults</p>
-            <p className="mb-1 text-xs opacity-70">Cards per session</p>
+            <p className="label mb-2">Background</p>
             <div className="flex gap-2">
-              {SESSION_OPTIONS.map((n) => (
+              {(["off", "photo"] as const).map((m) => (
                 <button
-                  key={n}
-                  className={`btn flex-1 px-1 ${settings.sessionLength === n ? "btn-solid" : ""}`}
-                  onClick={() => updateSettings({ sessionLength: n })}
-                  aria-pressed={settings.sessionLength === n}
+                  key={m}
+                  className={`btn flex-1 ${bg.mode === m ? "btn-solid" : ""}`}
+                  onClick={() => setBg({ mode: m })}
+                  aria-pressed={bg.mode === m}
                 >
-                  {n === 552 ? "All" : n}
+                  {m === "off" ? "Off" : "Photo"}
                 </button>
               ))}
             </div>
-            <div className="mt-3 flex flex-col gap-2">
-              <label className="flex cursor-pointer items-center justify-between border rule px-3 py-2 text-sm">
-                <span>Weak pairs first</span>
+            {bg.mode !== "off" && (
+              <label className="mt-3 block">
+                <span className="mb-1 flex justify-between text-xs opacity-70">
+                  <span>Opacity</span>
+                  <span className="tabular-nums">
+                    {Math.round(bg.intensity * 100)}
+                  </span>
+                </span>
                 <input
-                  type="checkbox"
-                  checked={settings.weakFirst}
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={Math.round(bg.intensity * 100)}
                   onChange={(e) =>
-                    updateSettings({ weakFirst: e.target.checked })
+                    setBg({ intensity: Number(e.target.value) / 100 })
                   }
+                  className="w-full accent-[var(--color-coal)]"
+                  aria-label="Background strength"
                 />
               </label>
-              <label className="flex cursor-pointer items-center justify-between border rule px-3 py-2 text-sm">
-                <span>Auto-advance after grading</span>
-                <input
-                  type="checkbox"
-                  checked={settings.autoAdvance}
-                  onChange={(e) =>
-                    updateSettings({ autoAdvance: e.target.checked })
-                  }
-                />
-              </label>
+            )}
+            <div className="mt-2 flex flex-wrap gap-2">
+              <button className="btn" onClick={() => bgRef.current?.click()}>
+                {hasImage ? "Replace photo" : "Upload photo"}
+              </button>
+              {hasImage && (
+                <button className="btn" onClick={() => void doBgRemove()}>
+                  Remove
+                </button>
+              )}
+              <input
+                ref={bgRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) void doBgFile(f);
+                  e.target.value = "";
+                }}
+              />
             </div>
+            {!hasImage && bg.mode !== "off" && (
+              <p className="mt-2 text-xs opacity-70">
+                Upload a photo first. Nothing shows until you do.
+              </p>
+            )}
+            <p className="mt-2 text-xs opacity-70">
+              Stored only in this browser. Not included in JSON export.
+            </p>
           </section>
 
           <section>
