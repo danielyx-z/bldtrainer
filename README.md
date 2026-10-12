@@ -1,12 +1,11 @@
-# bldtrainer
+# BLD/PAIRS
 
-I'm learning 3x3 blindfolded and kept blanking on my letter pairs, so I built this to drill them. A pair pops up, you picture your image, hit space, and mark got it or still learning. The ones you miss come back first.
+I'm learning 3x3 blindfolded and didn't enjoy keeping an Excel sheet for my letter pairs, so this helps solve it.
+All 552 Speffz pairs are in there with preset words. You can edit anything you don't like with your own words, saved on browser with import/export. 
 
+Visit the live site [here](https://bldtrainer-sigma.vercel.app/).
 ![trainer](demo/trainer.png)
 ![revealed card](demo/revealed.png)
-
-All 552 Speffz pairs are in there with preset words. Anything you don't like, click the pair and write your own. Yours always win.
-
 ![library](demo/pairs.png)
 
 ## Running it
@@ -22,7 +21,7 @@ npm run dev
 
 ```
 UF: UFO
-AD: Addison (friend of mine), Addicted
+AD: Advertisement
 ```
 
 The app reads the file directly. Edit it and reload.
@@ -31,4 +30,3 @@ The app reads the file directly. Edit it and reload.
 
 No account, no server. Your words, progress, and settings sit in localStorage. A background photo sits in IndexedDB on the same machine and never gets exported. Moving machines? Settings has export/import JSON.
 
-Live at https://bldtrainer-sigma.vercel.app (set `NEXT_PUBLIC_SITE_URL` at build time if that ever changes, otherwise canonical URLs and the sitemap fall back to it).
