@@ -13,7 +13,7 @@ const paperMono = localFont({
 });
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://bld-letter-pairs.app";
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://bldtrainer-sigma.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -78,7 +78,7 @@ export default function RootLayout({
             {children}
           </main>
           <footer className="relative z-10 shrink-0 border-t rule">
-            <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-2 px-4 py-2 text-[11px] tracking-widest uppercase opacity-60">
+            <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-2 px-4 py-1.5 text-[10px] tracking-widest uppercase opacity-60 sm:py-2 sm:text-[11px]">
               <span className="tabular-nums">pairs 552 · images 612 · letters a–x</span>
               <span>typeset in paper mono</span>
             </div>

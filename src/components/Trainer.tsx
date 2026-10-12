@@ -254,7 +254,7 @@ export function Trainer() {
         </span>
       </div>
       <p
-        className="mb-4 text-sm tracking-tight opacity-70 tabular-nums select-none"
+        className="mb-2 text-sm tracking-tight opacity-70 tabular-nums select-none sm:mb-4"
         role="progressbar"
         aria-valuenow={index}
         aria-valuemax={deck.length}
@@ -264,7 +264,7 @@ export function Trainer() {
         {Math.round((index / deck.length) * 100)}%
       </p>
 
-      <div className="card relative flex h-[clamp(340px,52dvh,460px)] flex-col px-4 py-6 text-center sm:px-6">
+      <div className="card relative flex h-[clamp(300px,46dvh,460px)] flex-col px-4 py-5 text-center sm:px-6 sm:py-6">
         <span aria-hidden className="absolute top-2 left-3 opacity-40 select-none">+</span>
         <span aria-hidden className="absolute top-2 right-3 opacity-40 select-none">+</span>
         <span aria-hidden className="absolute bottom-2 left-3 opacity-40 select-none">+</span>
@@ -288,7 +288,7 @@ export function Trainer() {
             </p>
             <p className="label mt-2 tabular-nums">{codepoints(pair)}</p>
 
-            <div className="mx-auto mt-4 max-w-sm min-h-[120px] w-full">
+            <div className="mx-auto mt-4 max-w-sm min-h-[100px] w-full">
               {revealed && (
                 <div className="animate-rise-in border-t rule pt-3">
                   {words.length === 0 ? (

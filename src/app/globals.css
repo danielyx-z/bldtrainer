@@ -131,6 +131,13 @@ summary:focus-visible {
   user-select: none;
 }
 
+/* Hide non-essential lines on short screens so the page fits without scroll. */
+@media (max-height: 680px) {
+  .hide-short {
+    display: none;
+  }
+}
+
 @keyframes rise-in {
   from {
     opacity: 0;

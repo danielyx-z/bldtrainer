@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://bld-letter-pairs.app";
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://bldtrainer-sigma.vercel.app";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const routes = ["", "/pairs", "/guide"];

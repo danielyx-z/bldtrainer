@@ -84,7 +84,7 @@ export function PairsBrowser() {
               key={l}
               role="tab"
               aria-selected={tab === l}
-              className={`border rule px-2 py-0.5 text-xs tabular-nums ${tab === l ? "bg-[var(--color-coal)] text-[var(--color-paper)]" : "opacity-60"}`}
+              className={`border rule px-1.5 py-0.5 text-[11px] tabular-nums sm:px-2 sm:text-xs ${tab === l ? "bg-[var(--color-coal)] text-[var(--color-paper)]" : "opacity-60"}`}
               onClick={() => setTab(l)}
             >
               {l}
@@ -105,10 +105,9 @@ export function PairsBrowser() {
         <div className="min-h-0 flex-1 space-y-5 overflow-y-auto">
           {groups.map(({ letter, pairs }) => (
             <section key={letter} aria-label={`Pairs starting with ${letter}`}>
-              <div className="mb-1 flex items-baseline justify-between">
-                <h2 className="text-sm font-bold tracking-tight">
+              <div className="mb-1 flex items-end justify-between">
+                <h2 className="text-4xl leading-none font-bold tracking-tight">
                   {letter}
-                  <span className="font-normal opacity-50">.glyph</span>
                 </h2>
                 <p className="label tabular-nums">
                   {pairs.length} / 23

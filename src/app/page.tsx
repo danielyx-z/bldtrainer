@@ -10,11 +10,11 @@ export const metadata: Metadata = {
 export default function TrainPage() {
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="mb-3 shrink-0">
-        <h1 className="text-xl font-bold tracking-tight">
+      <div className="mb-2 shrink-0">
+        <h1 className="text-lg font-bold tracking-tight sm:text-xl">
           Pair trainer
         </h1>
-        <p className="mt-1 text-sm opacity-70">
+        <p className="hide-short mt-1 text-sm opacity-70">
           Look at the pair, recall your image, then reveal and mark
           whether you knew it.
         </p>

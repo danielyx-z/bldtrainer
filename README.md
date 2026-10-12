@@ -31,4 +31,4 @@ The app reads the file directly. Edit it and reload.
 
 No account, no server. Your words, progress, and settings sit in localStorage. A background photo sits in IndexedDB on the same machine and never gets exported. Moving machines? Settings has export/import JSON.
 
-Deploying somewhere real? Set `NEXT_PUBLIC_SITE_URL` to your domain at build time, otherwise the canonical URLs and sitemap point at a placeholder.
+Live at https://bldtrainer-sigma.vercel.app (set `NEXT_PUBLIC_SITE_URL` at build time if that ever changes, otherwise canonical URLs and the sitemap fall back to it).
