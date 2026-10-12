@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useStore } from "./StoreProvider";
 import { PairEditor } from "./PairEditor";
 import { ALL_PAIRS, LETTERS } from "@/lib/letters";
@@ -19,6 +19,15 @@ export function PairsBrowser() {
   const [mineOnly, setMineOnly] = useState(false);
   const [weakOnly, setWeakOnly] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!expanded) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setExpanded(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [expanded]);
 
   const groups = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -106,7 +115,7 @@ export function PairsBrowser() {
           {groups.map(({ letter, pairs }) => (
             <section key={letter} aria-label={`Pairs starting with ${letter}`}>
               <div className="mb-1 flex items-end justify-between">
-                <h2 className="text-4xl leading-none font-bold tracking-tight">
+                <h2 className="text-xl leading-none font-bold tracking-tight">
                   {letter}
                 </h2>
                 <p className="label tabular-nums">
