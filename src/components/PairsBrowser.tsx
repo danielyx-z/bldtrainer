@@ -56,7 +56,7 @@ export function PairsBrowser() {
             className="field sm:max-w-xs"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search pair or word… (e.g. UF, frog)"
+            placeholder="Search pair or word…"
             aria-label="Search pairs"
           />
           <div className="flex items-center gap-4 text-xs">

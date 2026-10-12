@@ -1,27 +1,34 @@
 # bldtrainer
 
-Flashcard trainer for 3x3 blindfolded letter pairs. A pair shows up, you think of your image, reveal, mark whether you knew it.
+I'm learning 3x3 blindfolded and kept blanking on my letter pairs, so I built this to drill them. A pair pops up, you picture your image, hit space, and mark got it or still learning. The ones you miss come back first.
 
 ![trainer](demo/trainer.png)
 ![revealed card](demo/revealed.png)
 
-552 pairs, Speffz A-X. Ships with presets, or click any pair and write your own words. Pairs you keep missing come back first.
+All 552 Speffz pairs are in there with preset words. Anything you don't like, click the pair and write your own. Yours always win.
 
 ![library](demo/pairs.png)
 
-## Run it
+## Running it
 
 ```sh
 npm install
 npm run dev
 ```
 
-Set `NEXT_PUBLIC_SITE_URL` to your domain before `npm run build`, otherwise canonical URLs and the sitemap point at the placeholder.
+## Pairs live here
 
-## Pairs
+`src/assets/pairs.txt`, one per line:
 
-Edit `src/assets/pairs.txt`. One per line, `AB: word, alternate`. The app reads the file directly, nothing to regenerate.
+```
+UF: UFO
+AD: Addison (friend of mine), Addicted
+```
 
-## Notes
+The app reads the file directly. Edit it and reload.
 
-No account, no server. Custom words, progress, and settings live in localStorage. A background photo lives in IndexedDB on the same machine and is never exported. Settings has Export/Import JSON if you switch machines.
+## Good to know
+
+No account, no server. Your words, progress, and settings sit in localStorage. A background photo sits in IndexedDB on the same machine and never gets exported. Moving machines? Settings has export/import JSON.
+
+Deploying somewhere real? Set `NEXT_PUBLIC_SITE_URL` to your domain at build time, otherwise the canonical URLs and sitemap point at a placeholder.

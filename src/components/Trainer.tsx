@@ -240,8 +240,9 @@ export function Trainer() {
   }
 
   return (
-    <div className="mx-auto flex min-h-0 w-full max-w-xl flex-1 flex-col justify-center">
-      <div className="mb-2 flex items-center justify-between text-xs">
+    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+      <div className="m-auto w-full max-w-xl py-2">
+      <div className="mb-2 flex items-center justify-between gap-2 text-[11px] sm:text-xs">
         <span className="label tabular-nums">
           {String(index + 1).padStart(3, "0")} /{" "}
           {String(deck.length).padStart(3, "0")}
@@ -263,7 +264,7 @@ export function Trainer() {
         {Math.round((index / deck.length) * 100)}%
       </p>
 
-      <div className="card relative flex h-[clamp(340px,52dvh,460px)] flex-col px-6 py-6 text-center">
+      <div className="card relative flex h-[clamp(340px,52dvh,460px)] flex-col px-4 py-6 text-center sm:px-6">
         <span aria-hidden className="absolute top-2 left-3 opacity-40 select-none">+</span>
         <span aria-hidden className="absolute top-2 right-3 opacity-40 select-none">+</span>
         <span aria-hidden className="absolute bottom-2 left-3 opacity-40 select-none">+</span>
@@ -394,6 +395,7 @@ export function Trainer() {
             </button>
           </>
         )}
+      </div>
       </div>
     </div>
   );
